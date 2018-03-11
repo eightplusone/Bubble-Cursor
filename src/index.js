@@ -129,7 +129,7 @@ $(document).ready(function(){
       // Random distractors
       //
       let counter = 0;
-      while (counter <= Math.floor(a/w)) { 
+      while (counter <= Math.floor(2*a/w)) { 
         let angle = Math.random()*Math.PI*2;
         let distance = Math.random()*width;
 
