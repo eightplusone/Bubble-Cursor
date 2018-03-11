@@ -2,10 +2,8 @@ $(document).ready(function(){
   /*
    * Constants
    */
-  let CURSOR_SIZE = 32;
   let CURSOR_COLOR = "#000000";
   let CURSOR_AREA_OPACITY = "0.5";
-  let TARGET_SIZE = 50;
   let TARGET_BUBBLE_SIZE = 5;
   let TARGET_HIGHLIGHT_COLOR = "#ff0000";
   let TARGET_DEFAULT_COLOR = "#dddddd";
