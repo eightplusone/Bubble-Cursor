@@ -322,11 +322,13 @@ $(document).ready(function(){
             d3.select("#target" + i)
               .attr("r", function() { if (i == 0) return w*unit; return (w*unit - TARGET_BUBBLE_SIZE) })
               .style("fill", TARGET_HIGHLIGHT_COLOR)
+              .style("stroke", TARGET_DEFAULT_COLOR)
+              .style("stroke-width", TARGET_BUBBLE_SIZE)
             ;
           } else {
             d3.select("#target" + i)
               .style("fill", function() { if (i == 0) return "green"; return "none"; })
-              .style("stroke", "TARGET_DEFAULT_COLOR")
+              .style("stroke", TARGET_DEFAULT_COLOR)
               .style("stroke-width", function() { if (i == 0) return 0; return TARGET_BUBBLE_SIZE; })
             ;
           }
