@@ -22,40 +22,133 @@ $(document).ready(function(){
     .attr("viewBox","0 0 " + Math.min(width,height) + " " + Math.min(width,height))
     .attr("preserveAspectRatio","xMinYMin")
   ;
+
+  // Measure unit of the experiment
   let unit = Math.min(window.innerHeight, window.innerWidth) / 900;
 
+  /*
+   * Main function that draws the entire canvas
+   */
   function draw(ct, a, w, eww, d) {
     let indexMin = 0;
     let indexSecondMin = -1;
 
-    function generateData(isFirstTime, startingLocation) {
-      let output = [];
-
-      // The first target in the list is the goal target
-      if (isFirstTime) {
-        output.push([width/2, height/2]);
-      } else {
-        let x = 0, y = 0;
-
-        while (x <= w*unit || x >= (width-w*unit) || y <= w*unit || y >= (height-w*unit)) {
-          let angle = Math.random() * Math.PI * 2;
-          x = startingLocation[0] + Math.cos(angle) * a * unit;
-          y = startingLocation[1] + Math.sin(angle) * a * unit;
-        }
-
-        output.push([x, y]);
-      }
-
-      // Distractors
-      output.push([100, 100], [200, 200]);
-
-      return output;
-    }
-
+    // Calculate distance between two points
     function distance(x, y) {
       return Math.sqrt((x[0]-y[0]) * (x[0]-y[0]) + (x[1]-y[1]) * (x[1] - y[1]));
     }
 
+    // Check if a new circle overlaps with any existing one
+    function isOverlap(data, center) {
+      for (let d in data) {
+        if (distance(d, center) <= 2*w*unit) return true;
+      }
+      return false;
+    }
+
+    function generateData(isFirstTime, startingLocation) {
+      let output = [];
+      let nextTarget = [0, 0];
+
+      // 
+      // The first target in the list is the next goal target
+      //
+      if (isFirstTime) {
+        nextTarget[0] = width/2;
+        nextTarget[1] = height/2;
+      } else {
+        while (nextTarget[0] <= w*unit || nextTarget[0] >= (width-w*unit) || nextTarget[1] <= w*unit || nextTarget[1] >= (height-w*unit)) {
+          let angle = Math.random()*Math.PI*2;
+          nextTarget[0] = startingLocation[0] + Math.cos(angle)*a*unit;
+          nextTarget[1] = startingLocation[1] + Math.sin(angle)*a*unit;
+        }
+      }
+      output.push(nextTarget);
+
+      //
+      // EW/W ratio controllers
+      //
+      // Calculate the straight line that connects the old and the new goal targets
+      let slope = (nextTarget[1] - startingLocation[1]) / (nextTarget[0] - startingLocation[0]);
+      let intercept = nextTarget[1] - slope * nextTarget[0];
+      
+      // Front (from next target toward old target)
+      let frontX = nextTarget[0] + 2*eww*w/Math.sqrt(1+slope*slope);
+      output.push([frontX, frontX * slope + intercept]);
+      
+      // Back (away from old target)
+      let backX = nextTarget[0] - 2*eww*w/Math.sqrt(1+slope*slope);
+      output.push([backX, backX * slope + intercept]);
+
+      // Sides
+      let perpendicular_intercept = nextTarget[1] + (1/slope)*nextTarget[0];
+      let topX = nextTarget[0] + 2*eww*w*Math.abs(slope)/Math.sqrt(1+slope*slope);
+      output.push([topX, -topX/slope + perpendicular_intercept]);
+      let botX = nextTarget[0] - 2*eww*w*Math.abs(slope)/Math.sqrt(1+slope*slope);
+      output.push([botX, -botX/slope + perpendicular_intercept]);
+
+      //
+      // Immediate target density controllers
+      //
+      let angleRef = Math.atan2(nextTarget[1]-startingLocation[1], nextTarget[0]-startingLocation[0]);  // Angle between the previous target and the new target
+      if (d == 1) {
+        let counter = 0;
+        while (counter <= Math.floor(a/w)) {
+          let angle = (Math.random()-0.5) * Math.PI/9;  // An angle from -10 to 10 degrees
+
+          // A random distance to the old goal target
+          let distance = Math.random()*a*unit;  
+
+          let coordX = startingLocation[0] + Math.cos(angleRef + angle)*distance;
+          let coordY = startingLocation[1] + Math.sin(angleRef + angle)*distance;
+          
+          if (!isOverlap(output, [coordX, coordY])) {
+            output.push([coordX, coordY]);
+            counter++;
+          }
+        }
+      } else if (d == 0.5) {
+        let counter = 0;
+        while (counter <= Math.floor(a/(2*w))) {
+          let angle = (Math.random()-0.5) * Math.PI/9;  // An angle from -10 to 10 degrees
+
+          // A random distance to the old goal target
+          let distance = Math.random()*a*unit;  
+
+          let coordX = startingLocation[0] + Math.cos(angleRef + angle)*distance;
+          let coordY = startingLocation[1] + Math.sin(angleRef + angle)*distance;
+
+          if (!isOverlap(output, [coordX, coordY])) {
+            output.push([coordX, coordY]);
+            counter++;
+          }
+        }
+      }
+
+      //
+      // Random distractors
+      //
+      let counter = 0;
+      while (counter <= Math.floor(a/w)) { 
+        let angle = Math.random()*Math.PI*2;
+        let distance = Math.random()*width;
+
+        let coordX = Math.cos(angle)*distance;
+        let coordY = Math.sin(angle)*distance;
+
+        if (!isOverlap(output, [coordX, coordY])) {
+          output.push([coordX, coordY]);
+          counter++;
+        }
+      }
+
+      return output;
+    }
+
+
+    //
+    // Experiments are divided by cursor types
+    //
     if (ct == "point") {
       let data = generateData(true, [0, 0]);
       let currentTarget = data[0];
@@ -146,7 +239,9 @@ $(document).ready(function(){
         }
       });  // end mouseclick
 
-    } else if (ct == "bubble") {
+    } 
+
+    if (ct == "bubble") {
       let data = generateData(true, [0, 0]);
       let currentTarget = data[0];
       let targetGroup = svg.append("g");
@@ -203,27 +298,27 @@ $(document).ready(function(){
           // Do not resize if the gap between two targets is bigger than the cursor's default size
           let min_target_dist = Math.min(conDist[indexMin], intDist[indexSecondMin]);
           
-          if (min_target_dist < CURSOR_SIZE) {
+          if (min_target_dist < w*unit) {
             circle
-              .attr("r", min_target_dist - TARGET_BUBBLE_SIZE)
+              .attr("r", Math.abs(min_target_dist - TARGET_BUBBLE_SIZE))
               .attr("transform", "translate(" + mousePosition[0] + "," + mousePosition[1] + ")")
             ;
           } else {
             circle
-              .attr("r", CURSOR_SIZE - TARGET_BUBBLE_SIZE)
+              .attr("r", w*unit)
               .attr("transform", "translate(" + mousePosition[0] + "," + mousePosition[1] + ")")
             ;  
           }
         } else {
           circle
-            .attr("r", CURSOR_SIZE)
+            .attr("r", w*unit)
             .attr("transform", "translate(" + mousePosition[0] + "," + mousePosition[1] + ")")
           ;
         }
 
         // Highlight the closest target when the cursor is in range
         data.forEach(function(target, i) {
-          if (i == indexMin && distance(mousePosition, currentTarget) < eww*w*unit) {
+          if (i == indexMin && distance(mousePosition, target) < eww*w*unit) {
             d3.select("#target" + i)
               .attr("r", function() { if (i == 0) return w*unit; return (w*unit - TARGET_BUBBLE_SIZE) })
               .style("fill", TARGET_HIGHLIGHT_COLOR)
@@ -242,7 +337,7 @@ $(document).ready(function(){
       svg.on('click', function() {
         let mousePosition = d3.mouse(this);
 
-        if (distance(mousePosition, currentTarget) < w*unit) {
+        if (distance(mousePosition, currentTarget) < eww*w*unit) {
           // Remove old data points and generate new ones
           targetGroup.remove();
           targetGroup = svg.append("g");
@@ -270,22 +365,26 @@ $(document).ready(function(){
         }
       });  // end mouseclick
 
-    } else if (ct == "object") {
+    } 
+
+    if (ct == "object") {
 
     }
   }
 
+  //
   // Get input settings
+  //
   let ct = document.querySelector('input[name="cursor-type"]:checked').value;
   let a = document.querySelector('input[name="amplitude"]:checked').value;
   let w = document.querySelector('input[name="width"]:checked').value;
   let eww = document.querySelector('input[name="eww"]:checked').value;
   let d = document.querySelector('input[name="density"]:checked').value;
-  console.log(ct, a, w, eww, d);
-  w *= 2;
 
+  // Redraw
   draw(ct, a, w, eww, d);
   
+  // When user clicks "Redraw"
   document.getElementById("redrawBtn").onclick = function() {
     // Get input settings
     ct = document.querySelector('input[name="cursor-type"]:checked').value;
@@ -293,8 +392,6 @@ $(document).ready(function(){
     w = document.querySelector('input[name="width"]:checked').value;
     eww = document.querySelector('input[name="eww"]:checked').value;
     d = document.querySelector('input[name="density"]:checked').value;
-    console.log(ct, a, w, eww, d);
-    //w *= 2;
 
     // Clear SVGß
     d3.select("svg > g > *").remove();
