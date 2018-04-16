@@ -1,45 +1,45 @@
 <html>
 <head>
-    <title>Hai Tran - RS1</title>
-    <meta name="description" content="HaiTran_RS1">
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width">
-    <script src="https://code.jquery.com/jquery-3.1.0.min.js"></script>
-    <script src="https://d3js.org/d3.v4.min.js"></script>
-    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-    <script type="text/javascript" src="index.js"></script>
-    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">        
-    <link rel="stylesheet" type="text/css" href="style.css">
+  <title>Hai Tran - RS1</title>
+  <meta name="description" content="CS422 - Hai Tran">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <script src="https://code.jquery.com/jquery-3.1.0.min.js"></script>
+  <script src="https://d3js.org/d3.v4.min.js"></script>
+  <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">        
+  <link rel="stylesheet" type="text/css" href="style.css">
 </head>
 <body>
-    <div class="control col-xs-4" align="left">
-        <div id="ct-radios"> Cursor Type (CT)
-            <div class="radio"><label><input type="radio" name="cursor-type" value="point" >Point</label></div>
-            <div class="radio"><label><input type="radio" name="cursor-type" value="bubble" checked>Bubble</label></div>
-            <div class="radio"><label><input type="radio" name="cursor-type" value="object">Object</label></div>
-        </div>
-        <div id="a-radios"> Amplitude (A)
-            <div class="radio"><label><input type="radio" name="amplitude" value="256" >256 units</label></div>
-            <div class="radio"><label><input type="radio" name="amplitude" value="512" checked>512 units</label></div>
-            <div class="radio"><label><input type="radio" name="amplitude" value="768">768 units</label></div>
-        </div>
-        <div id="w-radios"> Width (W)
-            <div class="radio"><label><input type="radio" name="width" value="8">08 units</label></div>
-            <div class="radio"><label><input type="radio" name="width" value="16" checked>16 units</label></div>
-            <div class="radio"><label><input type="radio" name="width" value="32" >32 units</label></div>
-        </div>
-        <div id="eww-radios"> Effective width to width ratio (EW/W)
-            <div class="radio"><label><input type="radio" name="eww" checked value="1.33">1.33</label></div>
-            <div class="radio"><label><input type="radio" name="eww" value="2">2.00</label></div>
-            <div class="radio"><label><input type="radio" name="eww" value="3">3.00</label></div>
-        </div>
-        <div id="d-radios"> Distracter density (D)
-            <div class="radio"><label><input type="radio" name="density" value="0">0.0</label></div>
-            <div class="radio"><label><input type="radio" name="density" value="0.5">0.5</label></div>
-            <div class="radio"><label><input type="radio" name="density" value="1" checked>1.0</label></div>
-        </div>
-        <div><input class="btn btn-primary" type="button" value="Redraw" id="redrawBtn"></div>
+  <div class="col-sm-3"></div>
+  <div class="col-sm-6">
+    <div class="text-center">
+      <h1>CS422: Prototype Experiment</h1>
+      <h2>by Hai Tran (htran41@uic)
     </div>
-    <div class="main col-xs-8"></div>
+    <p style="padding-top: 20px">
+      Dear participant, <br />
+      Thank you very much for participating in my study. The purpose of this study is to compare different cursor type to see which of them help users select on-screen targets faster and more accurately. 
+      <br /><br /><b>What you need</b>
+      <ul>
+        <li>A pointing device. A mouse is recommended.</li>
+        <li>A screen (laptop screen or desktop monitor) of at least Full HD resolution (1920 x 1080). Smaller screens may greatly impact the result of this study.</li>
+        <li>Google Chrome. This study has not been tested on other web browsers.</li>
+      </ul>
+      <b>Procedure</b>
+      <ul>
+        <li>This study should take 15 minutes or less of your time.</li>
+        <li>Your task, in brief, is to <b><u>click on the only green circle</u></b> among many circles on the screen. When you have successfully clicked on the target, the circles will be re-located for the next trial.</li>
+        <li>After every 9 trials, you have 5 seconds to prepare for the next block of trials. A countdown will be displayed before the next group of circles appear on the screen.</li>
+        <li>After 27 blocks, your cursor type will be changed. There are two types of cursor: pointer and bubble. The pointer cursor works as a normal cursor, which requires you to hover on a target in order to click the target. The bubble cursor, however, allows you to click on the target as soon as the target is in range.</li>
+        <li>The study ends when you have finished all 54 blocks. Once you see a message which confirms the completion, you can safely close your web browser.</li>
+        <li>You can click the Start button below to begin the experiment.</li>
+      </ul>
+      <span style="color:red; font-weight: bold">WARNING: Please do not close the browser tab or resize the Chrome window during the study. Doing this may cause problem to the application; your progress will be lost after that and you will have to start the experiment from the beginning again.</span> 
+    </p>
+    <div class="text-center" style="margin-top: 30px">
+      <button class="btn btn-primary" onclick="location.href='study.html'" style="font-size: 20px">Start</button>
+    </div>
+  </div>
 </body>
 </html>
