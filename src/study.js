@@ -10,7 +10,7 @@ $(document).ready(function(){
   let TARGET_BUBBLE_OPACITY = "1";
   
   let NUM_TRIALS = 9;
-  let MAX_TRIALS = 27-1;
+  let MAX_TRIALS = 2*3*3*3*9-1;
   
   /* 
    * Responsive svg 
