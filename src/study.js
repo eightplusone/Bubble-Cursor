@@ -526,6 +526,16 @@ $(document).ready(function(){
     d3.select("svg > circle").remove();
   }
 
+  // Parse user agent string by looking for recognized substring.
+  function findFirstString(str, choices) {
+    for (var j = 0; j < choices.length; j++) {
+      if (str.indexOf(choices[j]) >= 0) {
+        return choices[j];
+      }
+    }
+    return '?';
+  }
+
   // Genrates or remembers a somewhat-unique ID with distilled user-agent info.
   function getUniqueId() {
     if (!('uid' in localStorage)) {
