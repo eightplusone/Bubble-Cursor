@@ -526,6 +526,10 @@ $(document).ready(function(){
     d3.select("svg > circle").remove();
   }
 
+<<<<<<< HEAD
+=======
+  // Referenced from logging.js
+>>>>>>> 7c930ecf0b4ee9f4fe6b6b44921e6a2825b00f6b
   // Parse user agent string by looking for recognized substring.
   function findFirstString(str, choices) {
     for (var j = 0; j < choices.length; j++) {
